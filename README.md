@@ -36,6 +36,20 @@ Un **pipeline automatizado en Python** de 4 fases que convierte datos crudos en 
 
 ![Clusters resultante](/img/cluster_resultante.jpg)
 
+## Conclusiones
+
+El análisis reveló que **más del 70% del catálogo (35.474 productos) no puede 
+evaluarse completamente** por ausencia de ingredientes declarados. Del 30% restante, 
+la mayoría concentra su score entre 0.6 y 0.8 — calidad media-alta pero mejorable.
+
+El pipeline desarrollado responde la pregunta inicial: **sí es posible saber qué 
+productos son fiables**. Asignando un `product_quality_score` a cada registro y 
+segmentándolos en 5 grupos diferenciados, se puede filtrar el catálogo antes de 
+usarlo en cualquier análisis o modelo posterior.
+
+El clasificador Random Forest entrenado permite además **clasificar nuevos productos 
+automáticamente**, haciendo la solución reutilizable ante futuras descargas del dataset.
+
 ## Estructura del proyecto
 
 - anban-explorador-data
@@ -66,12 +80,10 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-
 ## Dataset — Open Beauty Facts 
 
 * Fuente: API pública de Open Beauty Facts  
 * https://world.openbeautyfacts.org/cgi/search.pl
-
 
 ***Descripción General***
 
@@ -91,7 +103,6 @@ pip install -r requirements.txt
 <details open>
 <summary></summary>
  
-
 | Nº | Campo | Descripción | Tipo | Requerido |
 |---|---|---|---|---|
 | 0 | `_id` | Identificador interno del producto | `string` | ✅ |
