@@ -1,3 +1,4 @@
+
 # Data Quality a Open Beauty Facts 
 
 ## Problema y Solución
@@ -9,7 +10,7 @@
 El resultado es un catálogo de 50.000 productos donde conviven registros perfectamente documentados con productos sin categoría, ingredientes sin identificar, nombres duplicados y datos en idiomas mezclados — sin que el usuario ni el sistema sepa cuáles son cuáles.
 
 El objetivo es responder:
-> **¿Cómo saber si un producto de Open Beauty Facts tiene datos suficientemente fiables para usarse en análisis o modelos?**
+> **¿Cómo identificar qué productos de Open Beauty Facts tienen datos suficientemente fiables para usarse en análisis o modelos futuros?**
 > 
 
 ***Solución — MVP***
@@ -85,11 +86,30 @@ segmento de calidad.
     - pre_dataset_products.csv
   - README.md
 
-## Instalación 
 
+## Instalación
+
+**1. Clonar el repositorio**
+```bash
+git clone https://github.com/MayeLabs/anban_explorador_data.git
+cd anban_explorador_data
+```
+
+**2. Crear y activar el entorno virtual**
+
+Windows:
+```bash
+python -m venv venv
+.\venv\Scripts\activate
+```
+Linux/Mac:
 ```bash
 python -m venv venv
 source venv/bin/activate
+```
+
+**3. Instalar dependencias**
+```bash
 pip install -r requirements.txt
 ```
 
