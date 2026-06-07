@@ -1,9 +1,8 @@
 # Data Quality a Open Beauty Facts 
 
+## Problema y Solución
 
-Web: https://world.openbeautyfacts.org/
-
-## Problem and Solution
+***Problema***
 
 **Open Beauty Facts** es una plataforma colaborativa donde cualquier persona puede registrar productos cosméticos y dermocosméticos. Esa apertura es su mayor valor, pero también su mayor riesgo: **nadie verifica que los datos subidos sean fiables**.
 
@@ -13,7 +12,7 @@ El objetivo es responder:
 > **¿Cómo saber si un producto de Open Beauty Facts tiene datos suficientemente fiables para usarse en análisis o modelos?**
 > 
 
-##  La solución — MVP
+***Solución — MVP***
 
 Un **pipeline automatizado en Python** de 4 fases que convierte datos crudos en un catálogo evaluado, segmentado y clasificable:
 
@@ -37,7 +36,7 @@ Un **pipeline automatizado en Python** de 4 fases que convierte datos crudos en 
 
 ![Clusters resultante](/img/cluster_resultante.jpg)
 
-## Project Structure
+## Estructura del proyecto
 
 - anban-explorador-data
   - data
@@ -59,7 +58,7 @@ Un **pipeline automatizado en Python** de 4 fases que convierte datos crudos en 
     - pre_dataset_products.csv
   - README.md
 
-## instalation 
+## Instalación 
 
 ```bash
 python -m venv venv
@@ -68,8 +67,73 @@ pip install -r requirements.txt
 ```
 
 
-#### Métricas
+## Dataset — Open Beauty Facts 
 
+* Fuente: API pública de Open Beauty Facts  
+* https://world.openbeautyfacts.org/cgi/search.pl
+
+
+***Descripción General***
+
+| | |
+|---|---|
+| **Proveedor** | Open Beauty Facts (comunidad colaborativa) |
+| **Acceso** | API REST pública, sin autenticación |
+| **Formato** | `application/json` |
+| **Volumen extraído** | ~50.000 productos (1.000 páginas × 10 lotes) |
+| **Almacenamiento** | SQLite — tabla `raw_products` |
+| **Licencia** | Open Database License (ODbL) |
+| **Nota** | Los datos son de fuente pública y no contienen información personal identificable |
+
+---
+
+***Campos extraídos de la API***
+<details>
+<summary></summary>
+ 
+
+| Nº | Campo | Descripción | Tipo | Requerido |
+|---|---|---|---|---|
+| 0 | `_id` | Identificador interno del producto | `string` | ✅ |
+| 1 | `code` | Código de barras del producto | `string` | ✅ |
+| 2 | `rev` | Número de revisión del registro | `int` | ❌ |
+| 3 | `update_key` | Clave de la última actualización | `string` | ❌ |
+| 4 | `brands` | Marca(s) del producto | `string` | ❌ |
+| 5 | `product_name` | Nombre del producto | `string` | ❌ |
+| 6 | `product_type` | Tipo de producto (siempre `beauty` en este dataset) | `string` | ❌ |
+| 7 | `countries` | Países donde se comercializa (texto libre) | `string` | ❌ |
+| 8 | `countries_tags` | Países en formato de etiqueta normalizada | `list` | ❌ |
+| 9 | `countries_hierarchy` | Jerarquía canónica de países (`en:france`, etc.) | `list` | ❌ |
+| 10 | `categories` | Categorías del producto (texto libre) | `string` | ❌ |
+| 11 | `categories_hierarchy` | Jerarquía canónica de categorías | `list` | ❌ |
+| 12 | `product_quantity` | Cantidad del producto (valor numérico) | `float` | ❌ |
+| 13 | `product_quantity_unit` | Unidad de la cantidad (`ml`, `g`, etc.) | `string` | ❌ |
+| 14 | `quantity` | Cantidad tal como aparece en el envase | `string` | ❌ |
+| 15 | `ingredients_n` | Número total de ingredientes declarados | `int` | ❌ |
+| 16 | `known_ingredients_n` | Número de ingredientes reconocidos por la plataforma | `int` | ❌ |
+| 17 | `unknown_ingredients_n` | Número de ingredientes no reconocidos | `int` | ❌ |
+| 18 | `completeness` | Score de completitud asignado por Open Beauty Facts (0–1) | `float` | ❌ |
+| 19 | `scans_n` | Número total de escaneos del producto | `int` | ❌ |
+| 20 | `unique_scans_n` | Número de usuarios únicos que escanearon el producto | `int` | ❌ |
+| 21 | `popularity_tags` | Etiquetas de popularidad asignadas por la plataforma | `list` | ❌ |
+| 22 | `created_t` | Timestamp de creación del registro | `int` (Unix) | ❌ |
+| 23 | `last_modified_t` | Timestamp de última modificación | `int` (Unix) | ❌ |
+| 24 | `last_updated_t` | Timestamp de última actualización | `int` (Unix) | ❌ |
+| 25 | `creator` | Usuario que creó el registro | `string` | ❌ |
+| 26 | `last_editor` | Último usuario que editó el registro | `string` | ❌ |
+| 27 | `last_modified_by` | Usuario responsable de la última modificación | `string` | ❌ |
+| 28 | `data_quality_tags` | Etiquetas de problemas de calidad detectados por la plataforma | `list` | ❌ |
+| 29 | `page` | Página de la API de la que se extrajo el registro | `int` | ✅ |
+| 30 | `batch_id` | Lote de descarga al que pertenece el registro (1–10) | `int` | ✅ |
+| 31 | `dtinserted` | Fecha y hora de inserción en la base de datos local | `datetime` | ✅ |
+
+</details>
+
+***Data Quality Layer - Métricas***
+
+<details>
+<summary></summary>
+ 
 | Métrica | Descripción | Tipo |
 |---|---|---|
 | `completeness_ratio` | Proporción de campos no nulos sobre el total de `quality_columns` (7 campos) | `float [0.0, 1.0]` |
@@ -92,6 +156,6 @@ pip install -r requirements.txt
 | `has_lang_conflict` | `1` si los idiomas entre países y categorías no comparten ningún prefijo en común | `int {0, 1}` |
 | `taxonomy_score` | Score de consistencia taxonómica: `1 - (has_lang_conflict + countries_mixl + categories_mixl) / 3` | `float [0.0, 1.0]` |
 | `product_quality_score` | Score final ponderado: `compl_critical_ratio × 0.50 + ingredients_quality_score × 0.35 + ((completeness_ratio + taxonomy_score) / 2) × 0.15`. Se fuerza a `0.0` si es duplicado, y a `-1` si el cálculo no pudo completarse. | `float {-1} ∪ [0.0, 1.0]` |
+</details>
 
----
 
