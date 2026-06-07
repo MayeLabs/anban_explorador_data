@@ -112,6 +112,10 @@ source venv/bin/activate
 ```bash
 pip install -r requirements.txt
 ```
+**4. Ejecutar notebooks**
+```bash
+jupyter lab
+```
 
 ## Dataset — Open Beauty Facts 
 
