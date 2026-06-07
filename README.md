@@ -3,6 +3,39 @@
 
 Web: https://world.openbeautyfacts.org/
 
+## Problem and Solution
+
+**Open Beauty Facts** es una plataforma colaborativa donde cualquier persona puede registrar productos cosméticos y dermocosméticos. Esa apertura es su mayor valor, pero también su mayor riesgo: **nadie verifica que los datos subidos sean fiables**.
+
+El resultado es un catálogo de 50.000 productos donde conviven registros perfectamente documentados con productos sin categoría, ingredientes sin identificar, nombres duplicados y datos en idiomas mezclados — sin que el usuario ni el sistema sepa cuáles son cuáles.
+
+El objetivo es responder:
+> **¿Cómo saber si un producto de Open Beauty Facts tiene datos suficientemente fiables para usarse en análisis o modelos?**
+> 
+
+##  La solución — MVP
+
+Un **pipeline automatizado en Python** de 4 fases que convierte datos crudos en un catálogo evaluado, segmentado y clasificable:
+
+| Fase | Notebook | Qué hace |
+|---|---|---|
+| **I — Ingesta** | `01_ingestion_ETL.ipynb` | Descarga 50.000 productos de la API en 10 lotes paginados y los almacena en SQLite (`raw_products`) |
+| **II — Data Quality** | `02_data_qa_layer.ipynb` | Calcula 20 métricas por producto (completitud, duplicidad, ingredientes, taxonomía) y genera un `product_quality_score` de 0.0 a 1.0 |
+| **III — EDA** | `03_eda.ipynb` | Explora distribuciones, correlaciones y perfiles de calidad por marca para entender el catálogo |
+| **IV — Clustering + Clasificador** | `04_cluster_ml.ipynb` | Segmenta los productos en 5 grupos de calidad con KMeans y entrena un Random Forest para clasificar nuevos registros |
+
+### Los 5 segmentos resultantes
+
+| Cluster | Perfil |
+|---|---|
+| Bien documentados | Alta calidad, ingredientes conocidos, datos completos |
+|  Incompletos | Baja completitud, sin categoría, sin país |
+|  Calidad mediocre | Datos parciales, ingredientes con problemas |
+|  Populares / duplicados | Alto engagement pero nombres repetidos |
+|  Sin categorizar | Sin taxonomía asignada, datos mínimos |
+
+
+![Clusters resultante](/img/cluster_resultante.jpg)
 
 ## Project Structure
 
@@ -33,15 +66,7 @@ python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
-## Phases
 
-### Phase I -  Ingesta + Almacenamiento
-
-Ingesta en lotes de los 50.000 productos
-
-### Phase II - Capa de calidad de datos
-
- Crear metricas para la verificacion, calidad y exploracion y aplicacion de clusterizacion de la calidad de datos
 
 #### Métricas
 
