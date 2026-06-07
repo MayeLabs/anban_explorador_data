@@ -38,17 +38,30 @@ Un **pipeline automatizado en Python** de 4 fases que convierte datos crudos en 
 
 ## Conclusiones
 
-El análisis reveló que **más del 70% del catálogo (35.474 productos) no puede 
-evaluarse completamente** por ausencia de ingredientes declarados. Del 30% restante, 
-la mayoría concentra su score entre 0.6 y 0.8 — calidad media-alta pero mejorable.
+El catálogo de Open Beauty Facts presenta problemas de calidad más profundos 
+de lo esperado: **35.474 de los 50.000 productos extraídos (70,9%) recibieron 
+score -1** por ausencia total de ingredientes declarados, quedando fuera de 
+cualquier análisis fiable.
 
-El pipeline desarrollado responde la pregunta inicial: **sí es posible saber qué 
-productos son fiables**. Asignando un `product_quality_score` a cada registro y 
-segmentándolos en 5 grupos diferenciados, se puede filtrar el catálogo antes de 
-usarlo en cualquier análisis o modelo posterior.
+Del 29,1% restante (14.526 productos con score válido), la calidad no es 
+uniforme. El clustering KMeans identificó 5 perfiles diferenciados — desde 
+productos bien documentados con scores superiores a 0.8, hasta registros sin 
+taxonomía ni datos mínimos. Esto confirma que **el catálogo no puede tratarse 
+como un dataset homogéneo**.
 
-El clasificador Random Forest entrenado permite además **clasificar nuevos productos 
-automáticamente**, haciendo la solución reutilizable ante futuras descargas del dataset.
+Entre los problemas más frecuentes detectados por la capa de Data Quality:
+- ~2.800 productos con nombre duplicado
+- ~1.600 con conflicto de idioma entre países y categorías
+- ~4.000 con discrepancia `Sum > total` en el conteo de ingredientes
+
+**Colgate y Mercadona** lideran en calidad mediana de datos (~0.85), 
+mientras que los productos sin marca identificada (`Unknown`) tienen 
+consistentemente los scores más bajos.
+
+El pipeline es reutilizable: ante una nueva descarga del dataset, los 4 
+notebooks ejecutados en orden reproducen la evaluación completa y el 
+clasificador Random Forest asigna automáticamente cada producto a su 
+segmento de calidad.
 
 ## Estructura del proyecto
 
