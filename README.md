@@ -88,7 +88,7 @@ pip install -r requirements.txt
 ---
 
 ***Campos extraídos de la API***
-<details>
+<details open>
 <summary></summary>
  
 
@@ -131,7 +131,7 @@ pip install -r requirements.txt
 
 ***Data Quality Layer - Métricas***
 
-<details>
+<details open>
 <summary></summary>
  
 | Métrica | Descripción | Tipo |
