@@ -84,6 +84,8 @@ segmento de calidad.
     - data_quality_no_filter.csv
     - final_dataset.csv
     - pre_dataset_products.csv
+  - DataQuality_OpenBeautyFacts.pptx
+  - DataQuality_OpenBeautyFacts.pdf
   - README.md
 
 
